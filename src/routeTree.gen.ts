@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LockRouteImport } from './routes/lock'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as RegisterOfficerRouteImport } from './routes/register.officer'
+import { Route as RegisterStudentRouteImport } from './routes/register.student'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +31,79 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterOfficerRoute = RegisterOfficerRouteImport.update({
+  id: '/officer',
+  path: '/officer',
+  getParentRoute: () => RegisterRoute,
+} as any)
+const RegisterStudentRoute = RegisterStudentRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => RegisterRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/verify': typeof VerifyRoute
+  '/register/officer': typeof RegisterOfficerRoute
+  '/register/student': typeof RegisterStudentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/verify': typeof VerifyRoute
+  '/register/officer': typeof RegisterOfficerRoute
+  '/register/student': typeof RegisterStudentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/verify': typeof VerifyRoute
+  '/register/officer': typeof RegisterOfficerRoute
+  '/register/student': typeof RegisterStudentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lock' | '/register'
+  fullPaths:
+    | '/'
+    | '/lock'
+    | '/register'
+    | '/verify'
+    | '/register/officer'
+    | '/register/student'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lock' | '/register'
-  id: '__root__' | '/' | '/lock' | '/register'
+  to:
+    | '/'
+    | '/lock'
+    | '/register'
+    | '/verify'
+    | '/register/officer'
+    | '/register/student'
+  id:
+    | '__root__'
+    | '/'
+    | '/lock'
+    | '/register'
+    | '/verify'
+    | '/register/officer'
+    | '/register/student'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LockRoute: typeof LockRoute
-  RegisterRoute: typeof RegisterRoute
+  RegisterRoute: typeof RegisterRouteWithChildren
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,13 +129,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register/officer': {
+      id: '/register/officer'
+      path: '/officer'
+      fullPath: '/register/officer'
+      preLoaderRoute: typeof RegisterOfficerRouteImport
+      parentRoute: typeof RegisterRoute
+    }
+    '/register/student': {
+      id: '/register/student'
+      path: '/student'
+      fullPath: '/register/student'
+      preLoaderRoute: typeof RegisterStudentRouteImport
+      parentRoute: typeof RegisterRoute
+    }
   }
 }
+
+interface RegisterRouteChildren {
+  RegisterOfficerRoute: typeof RegisterOfficerRoute
+  RegisterStudentRoute: typeof RegisterStudentRoute
+}
+
+const RegisterRouteChildren: RegisterRouteChildren = {
+  RegisterOfficerRoute: RegisterOfficerRoute,
+  RegisterStudentRoute: RegisterStudentRoute,
+}
+
+const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
+  RegisterRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LockRoute: LockRoute,
-  RegisterRoute: RegisterRoute,
+  RegisterRoute: RegisterRouteWithChildren,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
