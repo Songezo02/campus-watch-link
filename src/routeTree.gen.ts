@@ -12,9 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LockRouteImport } from './routes/lock'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ReportRouteImport } from './routes/report'
+import { Route as ResidentRouteImport } from './routes/resident'
+import { Route as SosRouteImport } from './routes/sos'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as RegisterOfficerRouteImport } from './routes/register.officer'
 import { Route as RegisterStudentRouteImport } from './routes/register.student'
+import { Route as SubmittedIdRouteImport } from './routes/submitted.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,6 +33,21 @@ const LockRoute = LockRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResidentRoute = ResidentRouteImport.update({
+  id: '/resident',
+  path: '/resident',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SosRoute = SosRouteImport.update({
+  id: '/sos',
+  path: '/sos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyRoute = VerifyRouteImport.update({
@@ -46,31 +65,48 @@ const RegisterStudentRoute = RegisterStudentRouteImport.update({
   path: '/student',
   getParentRoute: () => RegisterRoute,
 } as any)
+const SubmittedIdRoute = SubmittedIdRouteImport.update({
+  id: '/submitted/$id',
+  path: '/submitted/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
   '/register': typeof RegisterRouteWithChildren
+  '/report': typeof ReportRoute
+  '/resident': typeof ResidentRoute
+  '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/submitted/$id': typeof SubmittedIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
   '/register': typeof RegisterRouteWithChildren
+  '/report': typeof ReportRoute
+  '/resident': typeof ResidentRoute
+  '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/submitted/$id': typeof SubmittedIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/lock': typeof LockRoute
   '/register': typeof RegisterRouteWithChildren
+  '/report': typeof ReportRoute
+  '/resident': typeof ResidentRoute
+  '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/submitted/$id': typeof SubmittedIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,32 +114,48 @@ export interface FileRouteTypes {
     | '/'
     | '/lock'
     | '/register'
+    | '/report'
+    | '/resident'
+    | '/sos'
     | '/verify'
     | '/register/officer'
     | '/register/student'
+    | '/submitted/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/lock'
     | '/register'
+    | '/report'
+    | '/resident'
+    | '/sos'
     | '/verify'
     | '/register/officer'
     | '/register/student'
+    | '/submitted/$id'
   id:
     | '__root__'
     | '/'
     | '/lock'
     | '/register'
+    | '/report'
+    | '/resident'
+    | '/sos'
     | '/verify'
     | '/register/officer'
     | '/register/student'
+    | '/submitted/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LockRoute: typeof LockRoute
   RegisterRoute: typeof RegisterRouteWithChildren
+  ReportRoute: typeof ReportRoute
+  ResidentRoute: typeof ResidentRoute
+  SosRoute: typeof SosRoute
   VerifyRoute: typeof VerifyRoute
+  SubmittedIdRoute: typeof SubmittedIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -129,6 +181,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resident': {
+      id: '/resident'
+      path: '/resident'
+      fullPath: '/resident'
+      preLoaderRoute: typeof ResidentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sos': {
+      id: '/sos'
+      path: '/sos'
+      fullPath: '/sos'
+      preLoaderRoute: typeof SosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify': {
       id: '/verify'
       path: '/verify'
@@ -149,6 +222,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/register/student'
       preLoaderRoute: typeof RegisterStudentRouteImport
       parentRoute: typeof RegisterRoute
+    }
+    '/submitted/$id': {
+      id: '/submitted/$id'
+      path: '/submitted/$id'
+      fullPath: '/submitted/$id'
+      preLoaderRoute: typeof SubmittedIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -171,7 +251,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LockRoute: LockRoute,
   RegisterRoute: RegisterRouteWithChildren,
+  ReportRoute: ReportRoute,
+  ResidentRoute: ResidentRoute,
+  SosRoute: SosRoute,
   VerifyRoute: VerifyRoute,
+  SubmittedIdRoute: SubmittedIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
