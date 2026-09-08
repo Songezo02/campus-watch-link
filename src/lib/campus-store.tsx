@@ -16,6 +16,26 @@ import {
   type Role,
 } from "./campus-data";
 
+export interface RegisterResidentInput {
+  fullName: string;
+  gender: CampusUser["gender"];
+  accountType: "Student" | "Staff";
+  email: string;
+  number: string;
+  phone: string;
+  password: string;
+}
+
+export interface RegisterOfficerInput {
+  fullName: string;
+  gender: CampusUser["gender"];
+  email: string;
+  number: string;
+  phone: string;
+  password: string;
+  post?: string;
+}
+
 interface Session {
   userId: string;
   role: Role;
