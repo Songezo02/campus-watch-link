@@ -353,7 +353,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
       markNotificationsRead: () =>
         setNotifications((prev) => prev.map((n) => ({ ...n, read: true }))),
     };
-  }, [users, officers, incidents, notifications, session]);
+  }, [users, officers, incidents, notifications, session, credentials]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
