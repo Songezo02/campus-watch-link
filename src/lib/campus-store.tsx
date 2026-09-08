@@ -16,6 +16,26 @@ import {
   type Role,
 } from "./campus-data";
 
+export interface RegisterResidentInput {
+  fullName: string;
+  gender: CampusUser["gender"];
+  accountType: "Student" | "Staff";
+  email: string;
+  number: string;
+  phone: string;
+  password: string;
+}
+
+export interface RegisterOfficerInput {
+  fullName: string;
+  gender: CampusUser["gender"];
+  email: string;
+  number: string;
+  phone: string;
+  password: string;
+  post?: string;
+}
+
 interface Session {
   userId: string;
   role: Role;
@@ -30,6 +50,16 @@ interface StoreValue {
   session: Session | null;
   currentUser: CampusUser | Officer | null;
   login: (role: Role) => void;
+  loginWithEmail: (
+    email: string,
+    password: string,
+  ) => { ok: true; role: Role } | { ok: false; error: string };
+  registerResident: (input: RegisterResidentInput) =>
+    | { ok: true; user: CampusUser }
+    | { ok: false; error: string };
+  registerOfficer: (input: RegisterOfficerInput) =>
+    | { ok: true; officer: Officer }
+    | { ok: false; error: string };
   logout: () => void;
   lock: () => void;
   unlock: () => void;
@@ -62,6 +92,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
   const [incidents, setIncidents] = useState<Incident[]>(INCIDENTS);
   const [notifications, setNotifications] = useState<AppNotification[]>(NOTIFICATIONS);
   const [session, setSession] = useState<Session | null>(null);
+  const [credentials, setCredentials] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
@@ -126,6 +157,69 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
                 ? "u-2"
                 : "u-1";
         setSession({ userId: id, role, locked: false });
+      },
+      loginWithEmail: (email, password) => {
+        const key = email.trim().toLowerCase();
+        const account =
+          users.find((u) => u.email.toLowerCase() === key || u.number.toLowerCase() === key) ??
+          officers.find((o) => o.email.toLowerCase() === key || o.number.toLowerCase() === key);
+        if (!account) return { ok: false, error: "No account found with those details." };
+        const stored = credentials[account.id];
+        if (stored && stored !== password) return { ok: false, error: "Incorrect password." };
+        if (account.accountStatus === "Pending Approval")
+          return { ok: false, error: "Your account is still awaiting administrator approval." };
+        if (account.accountStatus === "Suspended" || account.accountStatus === "Rejected")
+          return { ok: false, error: `Account ${account.accountStatus.toLowerCase()}.` };
+        setSession({ userId: account.id, role: account.role, locked: false });
+        return { ok: true, role: account.role };
+      },
+      registerResident: (input) => {
+        const key = input.email.trim().toLowerCase();
+        const taken =
+          users.some((u) => u.email.toLowerCase() === key) ||
+          officers.some((o) => o.email.toLowerCase() === key);
+        if (taken) return { ok: false, error: "An account with this email already exists." };
+        const user: CampusUser = {
+          id: `u-${Math.random().toString(36).slice(2, 8)}`,
+          fullName: input.fullName.trim(),
+          gender: input.gender,
+          email: input.email.trim(),
+          phone: input.phone.trim(),
+          number: input.number.trim(),
+          role: input.accountType === "Staff" ? "staff" : "student",
+          photo: "",
+          accountStatus: "Active",
+          createdAt: new Date().toISOString(),
+        };
+        setUsers((prev) => [...prev, user]);
+        setCredentials((prev) => ({ ...prev, [user.id]: input.password }));
+        return { ok: true, user };
+      },
+      registerOfficer: (input) => {
+        const key = input.email.trim().toLowerCase();
+        const taken =
+          users.some((u) => u.email.toLowerCase() === key) ||
+          officers.some((o) => o.email.toLowerCase() === key);
+        if (taken) return { ok: false, error: "An account with this email already exists." };
+        const officer: Officer = {
+          id: `o-${Math.random().toString(36).slice(2, 8)}`,
+          fullName: input.fullName.trim(),
+          gender: input.gender,
+          email: input.email.trim(),
+          phone: input.phone.trim(),
+          number: input.number.trim(),
+          role: "officer",
+          photo: "",
+          accountStatus: "Pending Approval",
+          createdAt: new Date().toISOString(),
+          availability: "Off Duty",
+          shift: input.post?.trim() || "Unassigned",
+          responded: 0,
+          avgResponseMin: 0,
+        };
+        setOfficers((prev) => [...prev, officer]);
+        setCredentials((prev) => ({ ...prev, [officer.id]: input.password }));
+        return { ok: true, officer };
       },
       logout: () => setSession(null),
       lock: () => setSession((s) => (s ? { ...s, locked: true } : s)),
@@ -259,7 +353,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
       markNotificationsRead: () =>
         setNotifications((prev) => prev.map((n) => ({ ...n, read: true }))),
     };
-  }, [users, officers, incidents, notifications, session]);
+  }, [users, officers, incidents, notifications, session, credentials]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

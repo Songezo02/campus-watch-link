@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Camera, CheckCircle2, ImageUp, Lock } from "lucide-react";
+import { toast } from "sonner";
 import { AppHeader, PhoneFrame } from "@/components/campus/shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCampus } from "@/lib/campus-store";
+import type { CampusUser } from "@/lib/campus-data";
 
 export const Route = createFileRoute("/register/student")({
   head: () => ({
@@ -34,7 +37,45 @@ export const Route = createFileRoute("/register/student")({
 
 function StudentRegistration() {
   const navigate = useNavigate();
+  const { registerResident } = useCampus();
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [fullName, setFullName] = useState("");
+  const [gender, setGender] = useState<CampusUser["gender"]>("Male");
+  const [accountType, setAccountType] = useState<"Student" | "Staff">("Student");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (fullName.trim().length < 3) return setError("Please enter your full name and surname.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      return setError("Please enter a valid institutional email address.");
+    if (number.trim().length < 4) return setError("Please enter your student or staff number.");
+    if (phone.replace(/\D/g, "").length < 9) return setError("Please enter a valid phone number.");
+    if (password.length < 8) return setError("Password must be at least 8 characters.");
+    if (password !== confirm) return setError("Passwords do not match.");
+
+    const result = registerResident({
+      fullName,
+      gender,
+      accountType,
+      email,
+      number,
+      phone,
+      password,
+    });
+    if (!result.ok) return setError(result.error);
+
+    toast.success("Account created successfully");
+    setDone(true);
+  };
 
   if (done) {
     return (
@@ -46,7 +87,7 @@ function StudentRegistration() {
           </div>
           <h2 className="mt-6 text-xl font-bold">Account Created Successfully</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            We have sent an institutional email verification link and code to your campus mailbox.
+            We have sent an institutional email verification link and code to {email}.
           </p>
           <Button className="mt-8 h-12 w-full rounded-xl" onClick={() => navigate({ to: "/verify" })}>
             Verify My Account
@@ -62,13 +103,7 @@ function StudentRegistration() {
   return (
     <PhoneFrame>
       <AppHeader title="Student / Staff Registration" back="/register" />
-      <form
-        className="space-y-4 px-5 py-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setDone(true);
-        }}
-      >
+      <form className="space-y-4 px-5 py-6" onSubmit={submit} noValidate>
         <div className="flex flex-col items-center">
           <div className="flex size-24 items-center justify-center rounded-full bg-success-soft text-success">
             <Camera className="size-8" />
@@ -84,14 +119,21 @@ function StudentRegistration() {
         </div>
 
         <div className="space-y-1.5">
-          <Label>Full Name and Surname</Label>
-          <Input required placeholder="e.g. John Doe" className="h-11 rounded-xl" />
+          <Label htmlFor="fullName">Full Name and Surname</Label>
+          <Input
+            id="fullName"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            maxLength={100}
+            placeholder="e.g. John Doe"
+            className="h-11 rounded-xl"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Gender</Label>
-            <Select defaultValue="Male">
+            <Select value={gender} onValueChange={(v) => setGender(v as CampusUser["gender"])}>
               <SelectTrigger className="h-11 w-full rounded-xl">
                 <SelectValue />
               </SelectTrigger>
@@ -104,7 +146,7 @@ function StudentRegistration() {
           </div>
           <div className="space-y-1.5">
             <Label>Account Type</Label>
-            <Select defaultValue="Student">
+            <Select value={accountType} onValueChange={(v) => setAccountType(v as "Student" | "Staff")}>
               <SelectTrigger className="h-11 w-full rounded-xl">
                 <SelectValue />
               </SelectTrigger>
@@ -117,25 +159,68 @@ function StudentRegistration() {
         </div>
 
         <div className="space-y-1.5">
-          <Label>Institutional Email</Label>
-          <Input required type="email" placeholder="name@campus.ac.za" className="h-11 rounded-xl" />
+          <Label htmlFor="email">Institutional Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={255}
+            placeholder="name@campus.ac.za"
+            className="h-11 rounded-xl"
+          />
         </div>
         <div className="space-y-1.5">
-          <Label>Student or Staff Number</Label>
-          <Input required placeholder="STU-2026-0000" className="h-11 rounded-xl" />
+          <Label htmlFor="number">Student or Staff Number</Label>
+          <Input
+            id="number"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            maxLength={30}
+            placeholder="STU-2026-0000"
+            className="h-11 rounded-xl"
+          />
         </div>
         <div className="space-y-1.5">
-          <Label>Cellphone Number</Label>
-          <Input required type="tel" placeholder="072 000 0000" className="h-11 rounded-xl" />
+          <Label htmlFor="phone">Cellphone Number</Label>
+          <Input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            maxLength={20}
+            placeholder="072 000 0000"
+            className="h-11 rounded-xl"
+          />
         </div>
         <div className="space-y-1.5">
-          <Label>Password</Label>
-          <Input required type="password" placeholder="••••••••" className="h-11 rounded-xl" />
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="At least 8 characters"
+            className="h-11 rounded-xl"
+          />
         </div>
         <div className="space-y-1.5">
-          <Label>Confirm Password</Label>
-          <Input required type="password" placeholder="••••••••" className="h-11 rounded-xl" />
+          <Label htmlFor="confirm">Confirm Password</Label>
+          <Input
+            id="confirm"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            placeholder="••••••••"
+            className="h-11 rounded-xl"
+          />
         </div>
+
+        {error ? (
+          <p role="alert" className="rounded-xl bg-emergency-soft px-3 py-2 text-sm text-emergency">
+            {error}
+          </p>
+        ) : null}
 
         <div className="flex items-start gap-2 rounded-2xl bg-muted p-3 text-xs text-muted-foreground">
           <Lock className="mt-0.5 size-4 shrink-0" />
