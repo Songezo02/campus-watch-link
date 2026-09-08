@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as LockRouteImport } from './routes/lock'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -21,6 +22,8 @@ import { Route as ResidentRouteImport } from './routes/resident'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as OfficerIndexRouteImport } from './routes/officer.index'
+import { Route as OfficerIdRouteImport } from './routes/officer.$id'
 import { Route as RegisterOfficerRouteImport } from './routes/register.officer'
 import { Route as RegisterStudentRouteImport } from './routes/register.student'
 import { Route as ReportsIndexRouteImport } from './routes/reports.index'
@@ -35,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactsRoute = ContactsRouteImport.update({
@@ -87,6 +95,16 @@ const VerifyRoute = VerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OfficerIndexRoute = OfficerIndexRouteImport.update({
+  id: '/officer/',
+  path: '/officer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficerIdRoute = OfficerIdRouteImport.update({
+  id: '/officer/$id',
+  path: '/officer/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterOfficerRoute = RegisterOfficerRouteImport.update({
   id: '/officer',
   path: '/officer',
@@ -116,6 +134,7 @@ const SubmittedIdRoute = SubmittedIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
   '/notifications': typeof NotificationsRoute
@@ -126,15 +145,18 @@ export interface FileRoutesByFullPath {
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer/': typeof OfficerIndexRoute
   '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
   '/notifications': typeof NotificationsRoute
@@ -145,16 +167,19 @@ export interface FileRoutesByTo {
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer': typeof OfficerIndexRoute
   '/reports': typeof ReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
   '/notifications': typeof NotificationsRoute
@@ -165,10 +190,12 @@ export interface FileRoutesById {
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer/': typeof OfficerIndexRoute
   '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRouteTypes {
@@ -176,6 +203,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contacts'
     | '/lock'
     | '/notifications'
@@ -186,15 +214,18 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
     | '/reports/$id'
     | '/submitted/$id'
+    | '/officer/'
     | '/reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/contacts'
     | '/lock'
     | '/notifications'
@@ -205,15 +236,18 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
     | '/reports/$id'
     | '/submitted/$id'
+    | '/officer'
     | '/reports'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contacts'
     | '/lock'
     | '/notifications'
@@ -224,16 +258,19 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
     | '/reports/$id'
     | '/submitted/$id'
+    | '/officer/'
     | '/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   ContactsRoute: typeof ContactsRoute
   LockRoute: typeof LockRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -244,8 +281,10 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   SosRoute: typeof SosRoute
   VerifyRoute: typeof VerifyRoute
+  OfficerIdRoute: typeof OfficerIdRoute
   ReportsIdRoute: typeof ReportsIdRoute
   SubmittedIdRoute: typeof SubmittedIdRoute
+  OfficerIndexRoute: typeof OfficerIndexRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
 }
 
@@ -263,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contacts': {
@@ -335,6 +381,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/officer/': {
+      id: '/officer/'
+      path: '/officer'
+      fullPath: '/officer/'
+      preLoaderRoute: typeof OfficerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/officer/$id': {
+      id: '/officer/$id'
+      path: '/officer/$id'
+      fullPath: '/officer/$id'
+      preLoaderRoute: typeof OfficerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register/officer': {
       id: '/register/officer'
       path: '/officer'
@@ -390,6 +450,7 @@ const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   ContactsRoute: ContactsRoute,
   LockRoute: LockRoute,
   NotificationsRoute: NotificationsRoute,
@@ -400,8 +461,10 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   SosRoute: SosRoute,
   VerifyRoute: VerifyRoute,
+  OfficerIdRoute: OfficerIdRoute,
   ReportsIdRoute: ReportsIdRoute,
   SubmittedIdRoute: SubmittedIdRoute,
+  OfficerIndexRoute: OfficerIndexRoute,
   ReportsIndexRoute: ReportsIndexRoute,
 }
 export const routeTree = rootRouteImport
