@@ -30,6 +30,16 @@ interface StoreValue {
   session: Session | null;
   currentUser: CampusUser | Officer | null;
   login: (role: Role) => void;
+  loginWithEmail: (
+    email: string,
+    password: string,
+  ) => { ok: true; role: Role } | { ok: false; error: string };
+  registerResident: (input: RegisterResidentInput) =>
+    | { ok: true; user: CampusUser }
+    | { ok: false; error: string };
+  registerOfficer: (input: RegisterOfficerInput) =>
+    | { ok: true; officer: Officer }
+    | { ok: false; error: string };
   logout: () => void;
   lock: () => void;
   unlock: () => void;
