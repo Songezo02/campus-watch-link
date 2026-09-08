@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Camera, ImageUp, Lock, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { AppHeader, PhoneFrame } from "@/components/campus/shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCampus } from "@/lib/campus-store";
+import type { CampusUser } from "@/lib/campus-data";
 
 export const Route = createFileRoute("/register/officer")({
   head: () => ({
@@ -35,7 +38,37 @@ export const Route = createFileRoute("/register/officer")({
 
 function OfficerRegistration() {
   const navigate = useNavigate();
+  const { registerOfficer } = useCampus();
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [fullName, setFullName] = useState("");
+  const [gender, setGender] = useState<CampusUser["gender"]>("Male");
+  const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [post, setPost] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (fullName.trim().length < 3) return setError("Please enter your full name and surname.");
+    if (number.trim().length < 4) return setError("Please enter your staff number.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      return setError("Please enter a valid institutional staff email address.");
+    if (phone.replace(/\D/g, "").length < 9) return setError("Please enter a valid phone number.");
+    if (password.length < 8) return setError("Password must be at least 8 characters.");
+    if (password !== confirm) return setError("Passwords do not match.");
+
+    const result = registerOfficer({ fullName, gender, email, number, phone, password, post });
+    if (!result.ok) return setError(result.error);
+
+    toast.success("Registration submitted for approval");
+    setSubmitted(true);
+  };
 
   if (submitted) {
     return (
@@ -71,13 +104,7 @@ function OfficerRegistration() {
   return (
     <PhoneFrame>
       <AppHeader title="Security Officer Registration" back="/register" />
-      <form
-        className="space-y-4 px-5 py-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSubmitted(true);
-        }}
-      >
+      <form className="space-y-4 px-5 py-6" onSubmit={submit} noValidate>
         <div className="flex flex-col items-center">
           <div className="flex size-24 items-center justify-center rounded-full bg-primary-soft text-primary">
             <Camera className="size-8" />
@@ -95,11 +122,16 @@ function OfficerRegistration() {
           </p>
         </div>
 
-        <Field label="Full Name and Surname" placeholder="e.g. John Smith" />
+        <Field
+          label="Full Name and Surname"
+          value={fullName}
+          onChange={setFullName}
+          placeholder="e.g. John Smith"
+        />
 
         <div className="space-y-1.5">
           <Label>Gender</Label>
-          <Select defaultValue="Male">
+          <Select value={gender} onValueChange={(v) => setGender(v as CampusUser["gender"])}>
             <SelectTrigger className="h-11 w-full rounded-xl">
               <SelectValue />
             </SelectTrigger>
@@ -111,16 +143,54 @@ function OfficerRegistration() {
           </Select>
         </div>
 
-        <Field label="Staff Number" placeholder="SEC-2026-000" />
-        <Field label="Institutional Staff Email" type="email" placeholder="name@campus.ac.za" />
-        <Field label="Cellphone Number" type="tel" placeholder="072 000 0000" />
-        <Field label="Password" type="password" placeholder="••••••••" />
-        <Field label="Confirm Password" type="password" placeholder="••••••••" />
+        <Field label="Staff Number" value={number} onChange={setNumber} placeholder="SEC-2026-000" />
+        <Field
+          label="Institutional Staff Email"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          placeholder="name@campus.ac.za"
+        />
+        <Field
+          label="Cellphone Number"
+          type="tel"
+          value={phone}
+          onChange={setPhone}
+          placeholder="072 000 0000"
+        />
+        <Field
+          label="Password"
+          type="password"
+          value={password}
+          onChange={setPassword}
+          placeholder="At least 8 characters"
+        />
+        <Field
+          label="Confirm Password"
+          type="password"
+          value={confirm}
+          onChange={setConfirm}
+          placeholder="••••••••"
+        />
 
         <div className="space-y-1.5">
-          <Label>Motivation / Assigned Post (optional)</Label>
-          <Textarea rows={3} className="rounded-xl" placeholder="Assigned campus post or unit" />
+          <Label htmlFor="post">Motivation / Assigned Post (optional)</Label>
+          <Textarea
+            id="post"
+            rows={3}
+            value={post}
+            onChange={(e) => setPost(e.target.value)}
+            maxLength={500}
+            className="rounded-xl"
+            placeholder="Assigned campus post or unit"
+          />
         </div>
+
+        {error ? (
+          <p role="alert" className="rounded-xl bg-emergency-soft px-3 py-2 text-sm text-emergency">
+            {error}
+          </p>
+        ) : null}
 
         <div className="flex items-start gap-2 rounded-2xl bg-muted p-3 text-xs text-muted-foreground">
           <Lock className="mt-0.5 size-4 shrink-0" />
@@ -148,15 +218,28 @@ function Field({
   label,
   type = "text",
   placeholder,
+  value,
+  onChange,
 }: {
   label: string;
   type?: string;
   placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
 }) {
+  const id = label.toLowerCase().replace(/[^a-z]+/g, "-");
   return (
     <div className="space-y-1.5">
-      <Label>{label}</Label>
-      <Input type={type} placeholder={placeholder} className="h-11 rounded-xl" required />
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        maxLength={255}
+        placeholder={placeholder}
+        className="h-11 rounded-xl"
+      />
     </div>
   );
 }
