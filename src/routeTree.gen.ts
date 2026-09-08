@@ -10,14 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as LockRouteImport } from './routes/lock'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as ResidentRouteImport } from './routes/resident'
+import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as OfficerIndexRouteImport } from './routes/officer.index'
+import { Route as OfficerIdRouteImport } from './routes/officer.$id'
 import { Route as RegisterOfficerRouteImport } from './routes/register.officer'
 import { Route as RegisterStudentRouteImport } from './routes/register.student'
+import { Route as ReportsIndexRouteImport } from './routes/reports.index'
+import { Route as ReportsIdRouteImport } from './routes/reports.$id'
 import { Route as SubmittedIdRouteImport } from './routes/submitted.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,9 +35,34 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsRoute = ContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LockRoute = LockRouteImport.update({
   id: '/lock',
   path: '/lock',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -45,6 +80,11 @@ const ResidentRoute = ResidentRouteImport.update({
   path: '/resident',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SosRoute = SosRouteImport.update({
   id: '/sos',
   path: '/sos',
@@ -53,6 +93,16 @@ const SosRoute = SosRouteImport.update({
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficerIndexRoute = OfficerIndexRouteImport.update({
+  id: '/officer/',
+  path: '/officer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficerIdRoute = OfficerIdRouteImport.update({
+  id: '/officer/$id',
+  path: '/officer/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterOfficerRoute = RegisterOfficerRouteImport.update({
@@ -65,6 +115,16 @@ const RegisterStudentRoute = RegisterStudentRouteImport.update({
   path: '/student',
   getParentRoute: () => RegisterRoute,
 } as any)
+const ReportsIndexRoute = ReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsIdRoute = ReportsIdRouteImport.update({
+  id: '/reports/$id',
+  path: '/reports/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubmittedIdRoute = SubmittedIdRouteImport.update({
   id: '/submitted/$id',
   path: '/submitted/$id',
@@ -73,89 +133,159 @@ const SubmittedIdRoute = SubmittedIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRouteWithChildren
   '/report': typeof ReportRoute
   '/resident': typeof ResidentRoute
+  '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer/': typeof OfficerIndexRoute
+  '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRouteWithChildren
   '/report': typeof ReportRoute
   '/resident': typeof ResidentRoute
+  '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer': typeof OfficerIndexRoute
+  '/reports': typeof ReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/contacts': typeof ContactsRoute
   '/lock': typeof LockRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRouteWithChildren
   '/report': typeof ReportRoute
   '/resident': typeof ResidentRoute
+  '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
   '/verify': typeof VerifyRoute
+  '/officer/$id': typeof OfficerIdRoute
   '/register/officer': typeof RegisterOfficerRoute
   '/register/student': typeof RegisterStudentRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
+  '/officer/': typeof OfficerIndexRoute
+  '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/admin'
+    | '/contacts'
     | '/lock'
+    | '/notifications'
+    | '/profile'
     | '/register'
     | '/report'
     | '/resident'
+    | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
+    | '/reports/$id'
     | '/submitted/$id'
+    | '/officer/'
+    | '/reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/admin'
+    | '/contacts'
     | '/lock'
+    | '/notifications'
+    | '/profile'
     | '/register'
     | '/report'
     | '/resident'
+    | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
+    | '/reports/$id'
     | '/submitted/$id'
+    | '/officer'
+    | '/reports'
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/admin'
+    | '/contacts'
     | '/lock'
+    | '/notifications'
+    | '/profile'
     | '/register'
     | '/report'
     | '/resident'
+    | '/safety'
     | '/sos'
     | '/verify'
+    | '/officer/$id'
     | '/register/officer'
     | '/register/student'
+    | '/reports/$id'
     | '/submitted/$id'
+    | '/officer/'
+    | '/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  ContactsRoute: typeof ContactsRoute
   LockRoute: typeof LockRoute
+  NotificationsRoute: typeof NotificationsRoute
+  ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRouteWithChildren
   ReportRoute: typeof ReportRoute
   ResidentRoute: typeof ResidentRoute
+  SafetyRoute: typeof SafetyRoute
   SosRoute: typeof SosRoute
   VerifyRoute: typeof VerifyRoute
+  OfficerIdRoute: typeof OfficerIdRoute
+  ReportsIdRoute: typeof ReportsIdRoute
   SubmittedIdRoute: typeof SubmittedIdRoute
+  OfficerIndexRoute: typeof OfficerIndexRoute
+  ReportsIndexRoute: typeof ReportsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -167,11 +297,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts': {
+      id: '/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lock': {
       id: '/lock'
       path: '/lock'
       fullPath: '/lock'
       preLoaderRoute: typeof LockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -195,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResidentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sos': {
       id: '/sos'
       path: '/sos'
@@ -207,6 +379,20 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/officer/': {
+      id: '/officer/'
+      path: '/officer'
+      fullPath: '/officer/'
+      preLoaderRoute: typeof OfficerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/officer/$id': {
+      id: '/officer/$id'
+      path: '/officer/$id'
+      fullPath: '/officer/$id'
+      preLoaderRoute: typeof OfficerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register/officer': {
@@ -222,6 +408,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/register/student'
       preLoaderRoute: typeof RegisterStudentRouteImport
       parentRoute: typeof RegisterRoute
+    }
+    '/reports/': {
+      id: '/reports/'
+      path: '/reports'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof ReportsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/$id': {
+      id: '/reports/$id'
+      path: '/reports/$id'
+      fullPath: '/reports/$id'
+      preLoaderRoute: typeof ReportsIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/submitted/$id': {
       id: '/submitted/$id'
@@ -249,13 +449,23 @@ const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  ContactsRoute: ContactsRoute,
   LockRoute: LockRoute,
+  NotificationsRoute: NotificationsRoute,
+  ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRouteWithChildren,
   ReportRoute: ReportRoute,
   ResidentRoute: ResidentRoute,
+  SafetyRoute: SafetyRoute,
   SosRoute: SosRoute,
   VerifyRoute: VerifyRoute,
+  OfficerIdRoute: OfficerIdRoute,
+  ReportsIdRoute: ReportsIdRoute,
   SubmittedIdRoute: SubmittedIdRoute,
+  OfficerIndexRoute: OfficerIndexRoute,
+  ReportsIndexRoute: ReportsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
