@@ -92,6 +92,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
   const [incidents, setIncidents] = useState<Incident[]>(INCIDENTS);
   const [notifications, setNotifications] = useState<AppNotification[]>(NOTIFICATIONS);
   const [session, setSession] = useState<Session | null>(null);
+  const [credentials, setCredentials] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
