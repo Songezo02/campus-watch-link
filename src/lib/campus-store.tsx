@@ -85,6 +85,7 @@ interface StoreValue {
 const StoreContext = createContext<StoreValue | null>(null);
 
 const STORAGE_KEY = "campus-security-session-v1";
+const ACCOUNTS_KEY = "campus-security-accounts-v1";
 
 export function CampusStoreProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<CampusUser[]>(USERS);
