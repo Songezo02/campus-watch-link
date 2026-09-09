@@ -24,6 +24,7 @@ import { Route as SosRouteImport } from './routes/sos'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as OfficerIndexRouteImport } from './routes/officer.index'
 import { Route as OfficerIdRouteImport } from './routes/officer.$id'
+import { Route as RegisterIndexRouteImport } from './routes/register.index'
 import { Route as RegisterOfficerRouteImport } from './routes/register.officer'
 import { Route as RegisterStudentRouteImport } from './routes/register.student'
 import { Route as ReportsIndexRouteImport } from './routes/reports.index'
@@ -105,6 +106,11 @@ const OfficerIdRoute = OfficerIdRouteImport.update({
   path: '/officer/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterIndexRoute = RegisterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RegisterRoute,
+} as any)
 const RegisterOfficerRoute = RegisterOfficerRouteImport.update({
   id: '/officer',
   path: '/officer',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
   '/officer/': typeof OfficerIndexRoute
+  '/register/': typeof RegisterIndexRoute
   '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -161,7 +168,6 @@ export interface FileRoutesByTo {
   '/lock': typeof LockRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
-  '/register': typeof RegisterRouteWithChildren
   '/report': typeof ReportRoute
   '/resident': typeof ResidentRoute
   '/safety': typeof SafetyRoute
@@ -173,6 +179,7 @@ export interface FileRoutesByTo {
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
   '/officer': typeof OfficerIndexRoute
+  '/register': typeof RegisterIndexRoute
   '/reports': typeof ReportsIndexRoute
 }
 export interface FileRoutesById {
@@ -196,6 +203,7 @@ export interface FileRoutesById {
   '/reports/$id': typeof ReportsIdRoute
   '/submitted/$id': typeof SubmittedIdRoute
   '/officer/': typeof OfficerIndexRoute
+  '/register/': typeof RegisterIndexRoute
   '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +228,7 @@ export interface FileRouteTypes {
     | '/reports/$id'
     | '/submitted/$id'
     | '/officer/'
+    | '/register/'
     | '/reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -230,7 +239,6 @@ export interface FileRouteTypes {
     | '/lock'
     | '/notifications'
     | '/profile'
-    | '/register'
     | '/report'
     | '/resident'
     | '/safety'
@@ -242,6 +250,7 @@ export interface FileRouteTypes {
     | '/reports/$id'
     | '/submitted/$id'
     | '/officer'
+    | '/register'
     | '/reports'
   id:
     | '__root__'
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/reports/$id'
     | '/submitted/$id'
     | '/officer/'
+    | '/register/'
     | '/reports/'
   fileRoutesById: FileRoutesById
 }
@@ -395,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register/': {
+      id: '/register/'
+      path: '/'
+      fullPath: '/register/'
+      preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof RegisterRoute
+    }
     '/register/officer': {
       id: '/register/officer'
       path: '/officer'
@@ -436,11 +453,13 @@ declare module '@tanstack/react-router' {
 interface RegisterRouteChildren {
   RegisterOfficerRoute: typeof RegisterOfficerRoute
   RegisterStudentRoute: typeof RegisterStudentRoute
+  RegisterIndexRoute: typeof RegisterIndexRoute
 }
 
 const RegisterRouteChildren: RegisterRouteChildren = {
   RegisterOfficerRoute: RegisterOfficerRoute,
   RegisterStudentRoute: RegisterStudentRoute,
+  RegisterIndexRoute: RegisterIndexRoute,
 }
 
 const RegisterRouteWithChildren = RegisterRoute._addFileChildren(

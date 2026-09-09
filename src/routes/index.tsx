@@ -35,18 +35,32 @@ const demoAccounts: { role: Role; label: string; hint: string }[] = [
 ];
 
 function LoginScreen() {
-  const { login } = useCampus();
+  const { login, loginWithEmail } = useCampus();
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [role, setRole] = useState<Role>("student");
   const [email, setEmail] = useState("john.doe@campus.ac.za");
+  const [password, setPassword] = useState("Campus@2026");
+  const [error, setError] = useState<string | null>(null);
+
+  const go = (r: Role) =>
+    navigate({ to: r === "officer" ? "/officer" : r === "admin" ? "/admin" : "/resident" });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(role);
-    navigate({
-      to: role === "officer" ? "/officer" : role === "admin" ? "/admin" : "/resident",
-    });
+    setError(null);
+    const demo = demoAccounts.find((a) => a.hint === email.trim().toLowerCase());
+    if (demo) {
+      login(demo.role);
+      go(demo.role);
+      return;
+    }
+    const result = loginWithEmail(email, password);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    go(result.role);
   };
 
   return (
@@ -80,7 +94,8 @@ function LoginScreen() {
               <Input
                 id="password"
                 type={show ? "text" : "password"}
-                defaultValue="Campus@2026"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="h-12 rounded-xl pr-11"
               />
               <button
@@ -116,6 +131,12 @@ function LoginScreen() {
               ))}
             </div>
           </div>
+
+          {error ? (
+            <p role="alert" className="rounded-xl bg-emergency-soft px-3 py-2 text-sm text-emergency">
+              {error}
+            </p>
+          ) : null}
 
           <Button type="submit" size="lg" className="h-12 w-full rounded-xl text-base">
             Login

@@ -85,6 +85,7 @@ interface StoreValue {
 const StoreContext = createContext<StoreValue | null>(null);
 
 const STORAGE_KEY = "campus-security-session-v1";
+const ACCOUNTS_KEY = "campus-security-accounts-v1";
 
 export function CampusStoreProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<CampusUser[]>(USERS);
@@ -110,6 +111,45 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
     if (session) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     else window.localStorage.removeItem(STORAGE_KEY);
   }, [session]);
+
+  // Persist locally registered accounts so people can sign in again later.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = window.localStorage.getItem(ACCOUNTS_KEY);
+    if (!raw) return;
+    try {
+      const saved = JSON.parse(raw) as {
+        users: CampusUser[];
+        officers: Officer[];
+        credentials: Record<string, string>;
+      };
+      setUsers((prev) => [
+        ...prev,
+        ...saved.users.filter((s) => !prev.some((p) => p.id === s.id)),
+      ]);
+      setOfficers((prev) => [
+        ...prev,
+        ...saved.officers.filter((s) => !prev.some((p) => p.id === s.id)),
+      ]);
+      setCredentials((prev) => ({ ...saved.credentials, ...prev }));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ids = Object.keys(credentials);
+    if (!ids.length) return;
+    window.localStorage.setItem(
+      ACCOUNTS_KEY,
+      JSON.stringify({
+        users: users.filter((u) => ids.includes(u.id)),
+        officers: officers.filter((o) => ids.includes(o.id)),
+        credentials,
+      }),
+    );
+  }, [users, officers, credentials]);
 
   const value = useMemo<StoreValue>(() => {
     const resolveUser = () => {
