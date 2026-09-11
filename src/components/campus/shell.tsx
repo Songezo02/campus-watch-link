@@ -157,7 +157,7 @@ const residentNav = [
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav className="sticky bottom-0 z-20 grid grid-cols-5 items-end border-t border-border bg-card px-2 pb-3 pt-2">
+    <nav className="z-20 grid grid-cols-5 items-end border-t border-border bg-card px-2 pb-3 pt-2">
       {residentNav.map(({ to, label, icon: Icon, emphasis }) => {
         const active = pathname === to;
         if (emphasis) {
