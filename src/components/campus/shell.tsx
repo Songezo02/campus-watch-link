@@ -114,6 +114,16 @@ export function MapPreview({
   label: string;
   className?: string;
 }) {
+  const browserKey = import.meta.env['VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY'] as
+    | string
+    | undefined;
+  const coords = `${lat},${lng}`;
+  const embedUrl = browserKey
+    ? `https://www.google.com/maps/embed/v1/place?key=${browserKey}&q=${encodeURIComponent(
+        coords,
+      )}&zoom=17`
+    : null;
+
   return (
     <div
       className={cn(
@@ -121,26 +131,42 @@ export function MapPreview({
         className,
       )}
     >
-      <div
-        className="absolute inset-0 opacity-70"
-        style={{
-          backgroundImage:
-            "linear-gradient(0deg, transparent 24px, oklch(0.29 0.078 261 / 0.12) 25px), linear-gradient(90deg, transparent 24px, oklch(0.29 0.078 261 / 0.12) 25px)",
-          backgroundSize: "25px 25px",
-        }}
-      />
-      <div className="absolute left-6 top-8 h-3 w-28 rounded-full bg-primary/15" />
-      <div className="absolute bottom-10 right-8 h-16 w-20 rounded-lg bg-primary/10" />
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <span className="block size-4 rounded-full bg-emergency ring-4 ring-emergency/25" />
-      </div>
-      <div className="relative flex h-full flex-col justify-end p-3">
-        <div className="rounded-xl bg-card/90 px-3 py-2 backdrop-blur">
+      {embedUrl ? (
+        <iframe
+          title={`Map of ${label}`}
+          src={embedUrl}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+          className="absolute inset-0 size-full border-0"
+        />
+      ) : (
+        <>
+          <div
+            className="absolute inset-0 opacity-70"
+            style={{
+              backgroundImage:
+                "linear-gradient(0deg, transparent 24px, oklch(0.29 0.078 261 / 0.12) 25px), linear-gradient(90deg, transparent 24px, oklch(0.29 0.078 261 / 0.12) 25px)",
+              backgroundSize: "25px 25px",
+            }}
+          />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <span className="block size-4 rounded-full bg-emergency ring-4 ring-emergency/25" />
+          </div>
+        </>
+      )}
+      <div className="pointer-events-none relative flex h-full flex-col justify-end p-3">
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(coords)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="pointer-events-auto rounded-xl bg-card/90 px-3 py-2 backdrop-blur"
+        >
           <p className="text-xs font-semibold text-foreground">{label}</p>
           <p className="text-[11px] text-muted-foreground">
             {lat.toFixed(4)}, {lng.toFixed(4)}
           </p>
-        </div>
+        </a>
       </div>
     </div>
   );
