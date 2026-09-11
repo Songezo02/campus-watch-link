@@ -1,14 +1,37 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronLeft, Bell, Home, FileText, Siren, Phone, User } from "lucide-react";
-import type { ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { IncidentStatus, Priority } from "@/lib/campus-data";
 
 export function PhoneFrame({ children }: { children: ReactNode }) {
+  const all = Children.toArray(children);
+  const navIndex = all.findIndex(
+    (child) => isValidElement(child) && child.type === BottomNav,
+  );
+  const hasBottomNav = navIndex !== -1;
+  const beforeNav = hasBottomNav ? all.slice(0, navIndex) : all;
+  const afterNav = hasBottomNav ? all.slice(navIndex + 1) : [];
+
   return (
     <div className="min-h-screen bg-secondary py-0 md:py-8">
-      <div className="mx-auto w-full max-w-md bg-background shadow-[var(--shadow-float)] md:min-h-[860px] md:rounded-[2.5rem] md:border md:border-border md:p-0 md:overflow-hidden">
-        {children}
+      <div
+        className={cn(
+          "mx-auto w-full max-w-md bg-background shadow-[var(--shadow-float)] md:rounded-[2.5rem] md:border md:border-border md:p-0 md:overflow-hidden",
+          hasBottomNav
+            ? "flex h-[100dvh] flex-col md:h-[860px]"
+            : "h-[100dvh] overflow-y-auto md:h-[860px]",
+        )}
+      >
+        {hasBottomNav ? (
+          <>
+            <div className="min-h-0 flex-1 overflow-y-auto">{beforeNav}</div>
+            <BottomNav />
+            {afterNav}
+          </>
+        ) : (
+          all
+        )}
       </div>
     </div>
   );
