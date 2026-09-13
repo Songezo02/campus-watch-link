@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, CheckCircle2, ImageUp, Lock } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader, PhoneFrame } from "@/components/campus/shell";
+import { PhotoPicker } from "@/components/campus/photo-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +50,7 @@ function StudentRegistration() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +72,7 @@ function StudentRegistration() {
       number,
       phone,
       password,
+      photo,
     });
     if (!result.ok) return setError(result.error);
 
@@ -104,19 +107,12 @@ function StudentRegistration() {
     <PhoneFrame>
       <AppHeader title="Student / Staff Registration" back="/register" />
       <form className="space-y-4 px-5 py-6" onSubmit={submit} noValidate>
-        <div className="flex flex-col items-center">
-          <div className="flex size-24 items-center justify-center rounded-full bg-success-soft text-success">
-            <Camera className="size-8" />
-          </div>
-          <div className="mt-3 flex gap-2">
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <Camera className="size-4" /> Capture
-            </Button>
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <ImageUp className="size-4" /> Upload
-            </Button>
-          </div>
-        </div>
+        <PhotoPicker
+          value={photo}
+          onChange={setPhoto}
+          tone="success"
+          hint="Optional profile photo, used to help security identify you."
+        />
 
         <div className="space-y-1.5">
           <Label htmlFor="fullName">Full Name and Surname</Label>

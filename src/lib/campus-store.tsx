@@ -24,6 +24,7 @@ export interface RegisterResidentInput {
   number: string;
   phone: string;
   password: string;
+  photo?: string;
 }
 
 export interface RegisterOfficerInput {
@@ -34,6 +35,7 @@ export interface RegisterOfficerInput {
   phone: string;
   password: string;
   post?: string;
+  photo?: string;
 }
 
 interface Session {
@@ -227,7 +229,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
           phone: input.phone.trim(),
           number: input.number.trim(),
           role: input.accountType === "Staff" ? "staff" : "student",
-          photo: "",
+          photo: input.photo ?? "",
           accountStatus: "Active",
           createdAt: new Date().toISOString(),
         };
@@ -249,7 +251,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
           phone: input.phone.trim(),
           number: input.number.trim(),
           role: "officer",
-          photo: "",
+          photo: input.photo ?? "",
           accountStatus: "Pending Approval",
           createdAt: new Date().toISOString(),
           availability: "Off Duty",
