@@ -15,23 +15,12 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-secondary py-0 md:py-8">
-      <div
-        className={cn(
-          "mx-auto w-full max-w-md bg-background shadow-[var(--shadow-float)] md:rounded-[2.5rem] md:border md:border-border md:p-0 md:overflow-hidden",
-          hasBottomNav
-            ? "flex h-[100dvh] flex-col md:h-[860px]"
-            : "h-[100dvh] overflow-y-auto md:h-[860px]",
-        )}
-      >
-        {hasBottomNav ? (
-          <>
-            <div className="min-h-0 flex-1 overflow-y-auto">{beforeNav}</div>
-            <BottomNav />
-            {afterNav}
-          </>
-        ) : (
-          all
-        )}
+      <div className="mx-auto flex h-[100dvh] w-full max-w-md flex-col bg-background shadow-[var(--shadow-float)] md:h-[860px] md:rounded-[2.5rem] md:border md:border-border md:p-0 md:overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-y-auto pb-6">
+          {beforeNav}
+          {afterNav}
+        </div>
+        {hasBottomNav ? <BottomNav /> : null}
       </div>
     </div>
   );
