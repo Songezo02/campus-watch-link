@@ -75,7 +75,7 @@ function LoginScreen() {
               className="max-h-full max-w-full object-contain"
             />
           </div>
-          <h1 className="mt-5 text-3xl font-bold tracking-tight">Campus Security</h1>
+          <h1 className="mt-5 text-3xl font-bold tracking-tight">UFH Campus Security</h1>
           <p className="mt-1 text-sm opacity-80">Incident Reporting &amp; Response System</p>
         </div>
 
