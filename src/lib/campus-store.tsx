@@ -24,6 +24,7 @@ export interface RegisterResidentInput {
   number: string;
   phone: string;
   password: string;
+  photo?: string;
 }
 
 export interface RegisterOfficerInput {
