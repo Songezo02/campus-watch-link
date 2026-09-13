@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, ImageUp, Lock, ShieldCheck } from "lucide-react";
+import { Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader, PhoneFrame } from "@/components/campus/shell";
+import { PhotoPicker } from "@/components/campus/photo-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +51,7 @@ function OfficerRegistration() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [post, setPost] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +65,7 @@ function OfficerRegistration() {
     if (password.length < 8) return setError("Password must be at least 8 characters.");
     if (password !== confirm) return setError("Passwords do not match.");
 
-    const result = registerOfficer({ fullName, gender, email, number, phone, password, post });
+    const result = registerOfficer({ fullName, gender, email, number, phone, password, post, photo });
     if (!result.ok) return setError(result.error);
 
     toast.success("Registration submitted for approval");
@@ -105,22 +107,11 @@ function OfficerRegistration() {
     <PhoneFrame>
       <AppHeader title="Security Officer Registration" back="/register" />
       <form className="space-y-4 px-5 py-6" onSubmit={submit} noValidate>
-        <div className="flex flex-col items-center">
-          <div className="flex size-24 items-center justify-center rounded-full bg-primary-soft text-primary">
-            <Camera className="size-8" />
-          </div>
-          <div className="mt-3 flex gap-2">
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <Camera className="size-4" /> Capture
-            </Button>
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <ImageUp className="size-4" /> Upload
-            </Button>
-          </div>
-          <p className="mt-2 text-center text-[11px] text-muted-foreground">
-            ID/Face photo is used for officer verification only and stored securely.
-          </p>
-        </div>
+        <PhotoPicker
+          value={photo}
+          onChange={setPhoto}
+          hint="ID/Face photo is used for officer verification only and stored securely."
+        />
 
         <Field
           label="Full Name and Surname"

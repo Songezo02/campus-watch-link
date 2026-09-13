@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, CheckCircle2, ImageUp, Lock } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader, PhoneFrame } from "@/components/campus/shell";
+import { PhotoPicker } from "@/components/campus/photo-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +50,7 @@ function StudentRegistration() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +72,7 @@ function StudentRegistration() {
       number,
       phone,
       password,
+      photo,
     });
     if (!result.ok) return setError(result.error);
 
