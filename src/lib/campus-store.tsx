@@ -35,6 +35,7 @@ export interface RegisterOfficerInput {
   phone: string;
   password: string;
   post?: string;
+  photo?: string;
 }
 
 interface Session {
