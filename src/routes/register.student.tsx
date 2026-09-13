@@ -104,19 +104,12 @@ function StudentRegistration() {
     <PhoneFrame>
       <AppHeader title="Student / Staff Registration" back="/register" />
       <form className="space-y-4 px-5 py-6" onSubmit={submit} noValidate>
-        <div className="flex flex-col items-center">
-          <div className="flex size-24 items-center justify-center rounded-full bg-success-soft text-success">
-            <Camera className="size-8" />
-          </div>
-          <div className="mt-3 flex gap-2">
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <Camera className="size-4" /> Capture
-            </Button>
-            <Button type="button" size="sm" variant="secondary" className="rounded-xl">
-              <ImageUp className="size-4" /> Upload
-            </Button>
-          </div>
-        </div>
+        <PhotoPicker
+          value={photo}
+          onChange={setPhoto}
+          tone="success"
+          hint="Optional profile photo, used to help security identify you."
+        />
 
         <div className="space-y-1.5">
           <Label htmlFor="fullName">Full Name and Surname</Label>
