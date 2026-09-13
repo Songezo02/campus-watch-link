@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Eye, EyeOff, ShieldCheck, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneFrame } from "@/components/campus/shell";
 import { useCampus } from "@/lib/campus-store";
 import type { Role } from "@/lib/campus-data";
+import ufhLogoAsset from "@/assets/ufh-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -67,8 +68,12 @@ function LoginScreen() {
     <PhoneFrame>
       <div className="flex min-h-screen flex-col bg-primary px-6 pb-10 pt-14 text-primary-foreground md:min-h-[860px]">
         <div className="flex flex-col items-center text-center">
-          <div className="flex size-20 items-center justify-center rounded-3xl bg-primary-foreground/10 ring-1 ring-primary-foreground/20">
-            <ShieldCheck className="size-10" />
+          <div className="flex h-28 w-40 items-center justify-center">
+            <img
+              src={ufhLogoAsset.url}
+              alt="University of Fort Hare"
+              className="max-h-full max-w-full object-contain"
+            />
           </div>
           <h1 className="mt-5 text-3xl font-bold tracking-tight">Campus Security</h1>
           <p className="mt-1 text-sm opacity-80">Incident Reporting &amp; Response System</p>
