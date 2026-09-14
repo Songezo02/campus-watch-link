@@ -7,6 +7,7 @@ import {
   USERS,
   type AppNotification,
   type CampusUser,
+  type IdentityAudit,
   type Incident,
   type IncidentCategory,
   type IncidentStatus,
