@@ -310,6 +310,10 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
         const reporter = resolveUser() ?? users[0]!;
         const now = new Date().toISOString();
         const seq = 100 + incidents.length;
+        // Anonymous mode is only for signed-in students and staff. The account
+        // stays linked to the report; only the officer-facing view is masked.
+        const anonymous =
+          !!input.anonymous && (reporter.role === "student" || reporter.role === "staff");
         const incident: Incident = {
           id: `INC-2026-${seq}`,
           reporterId: reporter.id,
@@ -317,6 +321,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
           reporterNumber: reporter.number,
           reporterPhone: reporter.phone,
           reporterGender: reporter.gender,
+          anonymous,
           category: input.category,
           description: input.description,
           priority: input.emergency ? "Critical" : PRIORITY_BY_CATEGORY[input.category],
