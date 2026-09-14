@@ -132,6 +132,40 @@ export interface AppNotification {
   tone: "info" | "success" | "emergency" | "warning";
 }
 
+/** Audit trail entry written whenever an admin reveals an anonymous reporter. */
+export interface IdentityAudit {
+  id: string;
+  incidentId: string;
+  adminId: string;
+  adminName: string;
+  reason: string;
+  at: string;
+}
+
+export const ANONYMOUS_LABEL = "Anonymous Reporter";
+
+/** Officer-safe view of an incident's reporter fields. */
+export function reporterView(incident: Incident) {
+  if (incident.anonymous) {
+    return {
+      anonymous: true as const,
+      name: ANONYMOUS_LABEL,
+      number: "Hidden",
+      phone: null,
+      gender: "Hidden",
+      photo: "",
+    };
+  }
+  return {
+    anonymous: false as const,
+    name: incident.reporterName,
+    number: incident.reporterNumber,
+    phone: incident.reporterPhone,
+    gender: incident.reporterGender,
+    photo: "",
+  };
+}
+
 export const CAMPUS_LOCATIONS = [
   { name: "Main Campus Residence", lat: -25.7565, lng: 28.1961 },
   { name: "Engineering Building", lat: -25.7551, lng: 28.2312 },
