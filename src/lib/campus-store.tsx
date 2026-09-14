@@ -50,8 +50,16 @@ interface StoreValue {
   officers: Officer[];
   incidents: Incident[];
   notifications: AppNotification[];
+  identityAudit: IdentityAudit[];
   session: Session | null;
   currentUser: CampusUser | Officer | null;
+  /** Admin-only: reveals who filed an anonymous report and writes an audit record. */
+  revealReporterIdentity: (
+    incidentId: string,
+    reason: string,
+  ) =>
+    | { ok: true; name: string; number: string; email: string; phone: string }
+    | { ok: false; error: string };
   login: (role: Role) => void;
   loginWithEmail: (
     email: string,
