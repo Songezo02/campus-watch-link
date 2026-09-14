@@ -198,8 +198,37 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
       officers,
       incidents,
       notifications,
+      identityAudit,
       session,
       currentUser: resolveUser(),
+      revealReporterIdentity: (incidentId, reason) => {
+        const admin = resolveUser();
+        if (!admin || admin.role !== "admin")
+          return { ok: false, error: "Only administrators may reveal an anonymous reporter." };
+        if (!reason.trim())
+          return { ok: false, error: "A reason is required before revealing the identity." };
+        const incident = incidents.find((i) => i.id === incidentId);
+        if (!incident) return { ok: false, error: "Report not found." };
+        const reporter = users.find((u) => u.id === incident.reporterId);
+        setIdentityAudit((prev) => [
+          {
+            id: `aud-${Math.random().toString(36).slice(2, 8)}`,
+            incidentId,
+            adminId: admin.id,
+            adminName: admin.fullName,
+            reason: reason.trim(),
+            at: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        return {
+          ok: true,
+          name: reporter?.fullName ?? incident.reporterName,
+          number: reporter?.number ?? incident.reporterNumber,
+          email: reporter?.email ?? "—",
+          phone: reporter?.phone ?? incident.reporterPhone,
+        };
+      },
       login: (role) => {
         const id =
           role === "officer"
