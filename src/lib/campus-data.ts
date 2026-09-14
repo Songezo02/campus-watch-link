@@ -96,6 +96,12 @@ export interface Incident {
   reporterNumber: string;
   reporterPhone: string;
   reporterGender: string;
+  /**
+   * When true the reporter's identity is hidden from security officers.
+   * The account stays linked internally for accountability; only
+   * administrators may reveal it, and every reveal is audited.
+   */
+  anonymous?: boolean;
   officerId?: string;
   officerName?: string;
   category: IncidentCategory;
