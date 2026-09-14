@@ -96,6 +96,12 @@ export interface Incident {
   reporterNumber: string;
   reporterPhone: string;
   reporterGender: string;
+  /**
+   * When true the reporter's identity is hidden from security officers.
+   * The account stays linked internally for accountability; only
+   * administrators may reveal it, and every reveal is audited.
+   */
+  anonymous?: boolean;
   officerId?: string;
   officerName?: string;
   category: IncidentCategory;
@@ -124,6 +130,40 @@ export interface AppNotification {
   read: boolean;
   createdAt: string;
   tone: "info" | "success" | "emergency" | "warning";
+}
+
+/** Audit trail entry written whenever an admin reveals an anonymous reporter. */
+export interface IdentityAudit {
+  id: string;
+  incidentId: string;
+  adminId: string;
+  adminName: string;
+  reason: string;
+  at: string;
+}
+
+export const ANONYMOUS_LABEL = "Anonymous Reporter";
+
+/** Officer-safe view of an incident's reporter fields. */
+export function reporterView(incident: Incident) {
+  if (incident.anonymous) {
+    return {
+      anonymous: true as const,
+      name: ANONYMOUS_LABEL,
+      number: "Hidden",
+      phone: null,
+      gender: "Hidden",
+      photo: "",
+    };
+  }
+  return {
+    anonymous: false as const,
+    name: incident.reporterName,
+    number: incident.reporterNumber,
+    phone: incident.reporterPhone,
+    gender: incident.reporterGender,
+    photo: "",
+  };
 }
 
 export const CAMPUS_LOCATIONS = [

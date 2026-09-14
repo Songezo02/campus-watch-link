@@ -7,6 +7,7 @@ import {
   USERS,
   type AppNotification,
   type CampusUser,
+  type IdentityAudit,
   type Incident,
   type IncidentCategory,
   type IncidentStatus,
@@ -49,8 +50,16 @@ interface StoreValue {
   officers: Officer[];
   incidents: Incident[];
   notifications: AppNotification[];
+  identityAudit: IdentityAudit[];
   session: Session | null;
   currentUser: CampusUser | Officer | null;
+  /** Admin-only: reveals who filed an anonymous report and writes an audit record. */
+  revealReporterIdentity: (
+    incidentId: string,
+    reason: string,
+  ) =>
+    | { ok: true; name: string; number: string; email: string; phone: string }
+    | { ok: false; error: string };
   login: (role: Role) => void;
   loginWithEmail: (
     email: string,
@@ -73,6 +82,7 @@ interface StoreValue {
     lng: number;
     evidence?: Incident["evidence"];
     emergency?: boolean;
+    anonymous?: boolean;
   }) => Incident;
   advanceIncident: (id: string, status: IncidentStatus, officer?: Officer) => void;
   cancelIncident: (id: string, reason: string) => void;
@@ -96,6 +106,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<AppNotification[]>(NOTIFICATIONS);
   const [session, setSession] = useState<Session | null>(null);
   const [credentials, setCredentials] = useState<Record<string, string>>({});
+  const [identityAudit, setIdentityAudit] = useState<IdentityAudit[]>([]);
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
@@ -187,8 +198,37 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
       officers,
       incidents,
       notifications,
+      identityAudit,
       session,
       currentUser: resolveUser(),
+      revealReporterIdentity: (incidentId, reason) => {
+        const admin = resolveUser();
+        if (!admin || admin.role !== "admin")
+          return { ok: false, error: "Only administrators may reveal an anonymous reporter." };
+        if (!reason.trim())
+          return { ok: false, error: "A reason is required before revealing the identity." };
+        const incident = incidents.find((i) => i.id === incidentId);
+        if (!incident) return { ok: false, error: "Report not found." };
+        const reporter = users.find((u) => u.id === incident.reporterId);
+        setIdentityAudit((prev) => [
+          {
+            id: `aud-${Math.random().toString(36).slice(2, 8)}`,
+            incidentId,
+            adminId: admin.id,
+            adminName: admin.fullName,
+            reason: reason.trim(),
+            at: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        return {
+          ok: true,
+          name: reporter?.fullName ?? incident.reporterName,
+          number: reporter?.number ?? incident.reporterNumber,
+          email: reporter?.email ?? "—",
+          phone: reporter?.phone ?? incident.reporterPhone,
+        };
+      },
       login: (role) => {
         const id =
           role === "officer"
@@ -270,6 +310,10 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
         const reporter = resolveUser() ?? users[0]!;
         const now = new Date().toISOString();
         const seq = 100 + incidents.length;
+        // Anonymous mode is only for signed-in students and staff. The account
+        // stays linked to the report; only the officer-facing view is masked.
+        const anonymous =
+          !!input.anonymous && (reporter.role === "student" || reporter.role === "staff");
         const incident: Incident = {
           id: `INC-2026-${seq}`,
           reporterId: reporter.id,
@@ -277,6 +321,7 @@ export function CampusStoreProvider({ children }: { children: ReactNode }) {
           reporterNumber: reporter.number,
           reporterPhone: reporter.phone,
           reporterGender: reporter.gender,
+          anonymous,
           category: input.category,
           description: input.description,
           priority: input.emergency ? "Critical" : PRIORITY_BY_CATEGORY[input.category],
