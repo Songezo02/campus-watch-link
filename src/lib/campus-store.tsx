@@ -82,6 +82,7 @@ interface StoreValue {
     lng: number;
     evidence?: Incident["evidence"];
     emergency?: boolean;
+    anonymous?: boolean;
   }) => Incident;
   advanceIncident: (id: string, status: IncidentStatus, officer?: Officer) => void;
   cancelIncident: (id: string, reason: string) => void;
