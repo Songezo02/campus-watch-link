@@ -188,6 +188,24 @@ function AdminDashboard() {
             })}
           </TabsContent>
 
+          <TabsContent value="audit" className="mt-4 space-y-3">
+            {identityAudit.length === 0 ? (
+              <p className="surface-card p-6 text-center text-sm text-muted-foreground">
+                No anonymous reporter identities have been accessed.
+              </p>
+            ) : (
+              identityAudit.map((a) => (
+                <div key={a.id} className="surface-card space-y-1 p-4 text-sm">
+                  <p className="font-semibold">Incident #{a.incidentId}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Accessed by {a.adminName} ({a.adminId}) · {formatDateTime(a.at)}
+                  </p>
+                  <p className="text-xs">Reason: {a.reason}</p>
+                </div>
+              ))
+            )}
+          </TabsContent>
+
           <TabsContent value="officers" className="mt-4 space-y-3">
             {officers.map((o) => (
               <article key={o.id} className="surface-card flex flex-wrap items-center gap-3 p-4">
