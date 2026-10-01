@@ -69,9 +69,13 @@ function OfficerIncident() {
     );
   }
 
-  const reporterHistory = incidents.filter(
-    (i) => i.reporterId === incident.reporterId && i.id !== incident.id,
-  );
+  const reporter = reporterView(incident);
+  // Never link an anonymous report to the reporter's other reports — that could identify them.
+  const reporterHistory = reporter.anonymous
+    ? []
+    : incidents.filter(
+        (i) => i.reporterId === incident.reporterId && i.id !== incident.id && !i.anonymous,
+      );
 
   return (
     <PhoneFrame>
@@ -92,17 +96,28 @@ function OfficerIncident() {
           <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             <User className="size-4" /> Reporter Information
           </h2>
-          <div className="space-y-1 text-sm">
-            <p className="font-semibold">{incident.reporterName}</p>
-            <p className="text-xs text-muted-foreground">Number: {incident.reporterNumber}</p>
-            <p className="text-xs text-muted-foreground">Gender: {incident.reporterGender}</p>
-            <a
-              href={`tel:${incident.reporterPhone.replace(/\s/g, "")}`}
-              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
-            >
-              <Phone className="size-4" /> Call {incident.reporterPhone}
-            </a>
-          </div>
+          {reporter.anonymous ? (
+            <div className="space-y-1 text-sm">
+              <p className="flex items-center gap-2 font-semibold">
+                <Lock className="size-4" /> {reporter.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                The reporter chose to stay anonymous. Use the incident location to respond.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-1 text-sm">
+              <p className="font-semibold">{reporter.name}</p>
+              <p className="text-xs text-muted-foreground">Number: {reporter.number}</p>
+              <p className="text-xs text-muted-foreground">Gender: {reporter.gender}</p>
+              <a
+                href={`tel:${(reporter.phone ?? "").replace(/\s/g, "")}`}
+                className="mt-2 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+              >
+                <Phone className="size-4" /> Call {reporter.phone}
+              </a>
+            </div>
+          )}
           {reporterHistory.length ? (
             <div className="mt-4 border-t border-border pt-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
