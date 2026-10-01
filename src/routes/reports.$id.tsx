@@ -83,6 +83,10 @@ function ReportDetails() {
             <Info label="Location" value={incident.locationName} />
             <Info label="Coordinates" value={`${incident.lat.toFixed(4)}, ${incident.lng.toFixed(4)}`} />
             <Info label="Evidence" value={`${incident.evidence.length} item(s)`} />
+            <Info
+              label="Reporting Mode"
+              value={incident.anonymous ? "Anonymous (hidden from officers)" : "Identified"}
+            />
           </div>
           <MapPreview
             lat={incident.lat}

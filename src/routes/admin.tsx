@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PriorityBadge, StatusBadge } from "@/components/campus/shell";
+import { RevealIdentity } from "@/components/campus/reveal-identity";
 import { useCampus } from "@/lib/campus-store";
 import {
   CATEGORY_SPLIT,
@@ -31,6 +32,7 @@ import {
   RESPONSE_TREND,
   RISK_LOCATIONS,
   formatDateTime,
+  reporterView,
   responseGrade,
   responseMinutes,
 } from "@/lib/campus-data";
@@ -73,6 +75,7 @@ function AdminDashboard() {
     setOfficerApproval,
     reassign,
     advanceIncident,
+    identityAudit,
   } = useCampus();
   const navigate = useNavigate();
 
@@ -121,6 +124,7 @@ function AdminDashboard() {
             <TabsTrigger value="officers">Officers</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
           </TabsList>
 
           <TabsContent value="incidents" className="mt-4 space-y-3">
@@ -139,7 +143,7 @@ function AdminDashboard() {
                     </span>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {i.locationName} · Reporter {i.reporterName} · Officer{" "}
+                    {i.locationName} · Reporter {reporterView(i).name} · Officer{" "}
                     {i.officerName ?? "Unassigned"} · Response {mins === null ? "—" : `${mins} min`} (
                     {grade.label})
                   </p>
@@ -177,10 +181,29 @@ function AdminDashboard() {
                     >
                       Close
                     </Button>
+                    {i.anonymous ? <RevealIdentity incidentId={i.id} /> : null}
                   </div>
                 </article>
               );
             })}
+          </TabsContent>
+
+          <TabsContent value="audit" className="mt-4 space-y-3">
+            {identityAudit.length === 0 ? (
+              <p className="surface-card p-6 text-center text-sm text-muted-foreground">
+                No anonymous reporter identities have been accessed.
+              </p>
+            ) : (
+              identityAudit.map((a) => (
+                <div key={a.id} className="surface-card space-y-1 p-4 text-sm">
+                  <p className="font-semibold">Incident #{a.incidentId}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Accessed by {a.adminName} ({a.adminId}) · {formatDateTime(a.at)}
+                  </p>
+                  <p className="text-xs">Reason: {a.reason}</p>
+                </div>
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="officers" className="mt-4 space-y-3">

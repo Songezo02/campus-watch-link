@@ -69,6 +69,9 @@ function MyReports() {
                 <StatusBadge status={i.status} />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">Location: {i.locationName}</p>
+              <p className="text-xs text-muted-foreground">
+                Reporting Mode: {i.anonymous ? "Anonymous" : "Identified"}
+              </p>
               <div className="mt-3 flex items-center justify-between">
                 <PriorityBadge priority={i.priority} />
                 <span className="text-[11px] text-muted-foreground">

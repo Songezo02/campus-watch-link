@@ -1,10 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Crosshair, ImagePlus, Map, Video } from "lucide-react";
+import { Crosshair, ImagePlus, Lock, Map, Video } from "lucide-react";
 import { AppHeader, BottomNav, MapPreview, PhoneFrame, PriorityBadge } from "@/components/campus/shell";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -41,7 +53,7 @@ export const Route = createFileRoute("/report")({
 });
 
 function ReportIncident() {
-  const { createIncident } = useCampus();
+  const { createIncident, currentUser } = useCampus();
   const navigate = useNavigate();
   const [category, setCategory] = useState<IncidentCategory>("Suspicious Activity");
   const [description, setDescription] = useState("");
@@ -49,7 +61,12 @@ function ReportIncident() {
   const [pickingMap, setPickingMap] = useState(false);
   const [evidence, setEvidence] = useState<{ type: "photo" | "video" | "note"; label: string }[]>([]);
   const [confirming, setConfirming] = useState(false);
+  const [anonymous, setAnonymous] = useState(false);
   const spot = CAMPUS_LOCATIONS[locationIdx]!;
+
+  // Only signed-in students and staff may report anonymously.
+  const canAnonymous = currentUser?.role === "student" || currentUser?.role === "staff";
+  const isAnonymous = anonymous && canAnonymous;
 
   const submit = () => {
     const incident = createIncident({
@@ -59,8 +76,9 @@ function ReportIncident() {
       lat: spot.lat,
       lng: spot.lng,
       evidence,
+      anonymous: isAnonymous,
     });
-    toast.success("Report submitted");
+    toast.success(isAnonymous ? "Anonymous report submitted" : "Report submitted");
     navigate({ to: "/submitted/$id", params: { id: incident.id } });
   };
 
@@ -188,7 +206,46 @@ function ReportIncident() {
           ) : null}
         </div>
 
-        {confirming ? (
+        {canAnonymous ? (
+          <div className="space-y-2">
+            <Label>Reporting Identity</Label>
+            <div className="surface-card space-y-3 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor="anon" className="text-sm font-medium">
+                  Report Anonymously: {isAnonymous ? "ON" : "OFF"}
+                </Label>
+                <Switch id="anon" checked={anonymous} onCheckedChange={setAnonymous} />
+              </div>
+              <RadioGroup
+                value={anonymous ? "anon" : "self"}
+                onValueChange={(v) => setAnonymous(v === "anon")}
+                className="gap-2"
+              >
+                <label className="flex items-center gap-2 text-sm">
+                  <RadioGroupItem value="self" /> Report as Myself
+                </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <RadioGroupItem value="anon" /> Report Anonymously
+                </label>
+              </RadioGroup>
+              {isAnonymous ? (
+                <div className="flex items-start gap-2 rounded-xl bg-primary-soft p-3 text-xs text-primary">
+                  <Lock className="mt-0.5 size-4 shrink-0" />
+                  <div>
+                    <p className="font-semibold">Anonymous Report</p>
+                    <p>
+                      Your identity will be hidden from security officers when viewing this report.
+                      Your account is still securely linked to the report for system security and
+                      administrative purposes.
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        {confirming && !isAnonymous ? (
           <div className="surface-card space-y-3 border-2 border-primary p-4">
             <p className="text-sm font-semibold">
               Are you sure you want to submit this incident report?
@@ -215,6 +272,26 @@ function ReportIncident() {
             SUBMIT REPORT
           </Button>
         )}
+
+        <AlertDialog
+          open={confirming && isAnonymous}
+          onOpenChange={(open) => !open && setConfirming(false)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Submit Anonymously?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your identity will be hidden from Security Officers. Your account will remain
+                securely associated with this report for system security and authorized
+                administrative purposes.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={submit}>Submit Anonymously</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <BottomNav />
     </PhoneFrame>
