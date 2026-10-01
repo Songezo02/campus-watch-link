@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { Navigation, Phone, User } from "lucide-react";
+import { Lock, Navigation, Phone, User } from "lucide-react";
 import {
   AppHeader,
   MapPreview,
@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCampus } from "@/lib/campus-store";
-import { formatDateTime, type Resolution } from "@/lib/campus-data";
+import { formatDateTime, reporterView, type Resolution } from "@/lib/campus-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/officer/$id")({

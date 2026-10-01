@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCampus } from "@/lib/campus-store";
-import { timeAgo, type OfficerStatus } from "@/lib/campus-data";
+import { reporterView, timeAgo, type OfficerStatus } from "@/lib/campus-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/officer/")({
@@ -130,7 +130,7 @@ function OfficerDashboard() {
                 <div className="mt-2 space-y-0.5 text-xs text-muted-foreground">
                   <p>Reported: {timeAgo(i.reportedAt)}</p>
                   <p>Location: {i.locationName}</p>
-                  <p>Reporter: {i.reporterName}</p>
+                  <p>Reporter: {reporterView(i).name}</p>
                 </div>
                 <div className="mt-3 flex items-center justify-between">
                   <StatusBadge status={i.status} />
