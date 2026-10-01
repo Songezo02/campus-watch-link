@@ -139,7 +139,7 @@ function AdminDashboard() {
                     </span>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {i.locationName} · Reporter {i.reporterName} · Officer{" "}
+                    {i.locationName} · Reporter {reporterView(i).name} · Officer{" "}
                     {i.officerName ?? "Unassigned"} · Response {mins === null ? "—" : `${mins} min`} (
                     {grade.label})
                   </p>
@@ -177,6 +177,7 @@ function AdminDashboard() {
                     >
                       Close
                     </Button>
+                    {i.anonymous ? <RevealIdentity incidentId={i.id} /> : null}
                   </div>
                 </article>
               );
