@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PriorityBadge, StatusBadge } from "@/components/campus/shell";
+import { RevealIdentity } from "@/components/campus/reveal-identity";
 import { useCampus } from "@/lib/campus-store";
 import {
   CATEGORY_SPLIT,
@@ -31,6 +32,7 @@ import {
   RESPONSE_TREND,
   RISK_LOCATIONS,
   formatDateTime,
+  reporterView,
   responseGrade,
   responseMinutes,
 } from "@/lib/campus-data";
@@ -73,6 +75,7 @@ function AdminDashboard() {
     setOfficerApproval,
     reassign,
     advanceIncident,
+    identityAudit,
   } = useCampus();
   const navigate = useNavigate();
 
@@ -121,6 +124,7 @@ function AdminDashboard() {
             <TabsTrigger value="officers">Officers</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
           </TabsList>
 
           <TabsContent value="incidents" className="mt-4 space-y-3">
