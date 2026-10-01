@@ -1,7 +1,7 @@
 # Roadmap
 
 - [x] Fix registration page scrolling so the Register button is reachable
-- [ ] Anonymous incident reporting
+- [x] Anonymous incident reporting
   - [ ] Toggle + privacy notice on Report Incident screen
   - [ ] Confirmation dialog before anonymous submit
   - [ ] Store `anonymous` flag on incidents
